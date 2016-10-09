@@ -40,12 +40,11 @@
 /**/.idea/tasks.xml
 /**/.idea/vcs.xml
 
-#Ignore google-services.json file
-/**/google-services.json
-
-
 # Keystore files
 /**/*.jks
 
 # External native build folder generated in Android Studio 2.2 and later
 /**/.externalNativeBuild
+
+#Ignore google-services.json file
+/**/google-services.json
