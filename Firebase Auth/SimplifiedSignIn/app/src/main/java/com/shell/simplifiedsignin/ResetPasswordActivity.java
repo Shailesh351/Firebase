@@ -78,7 +78,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                 }
             }
         });
-        mProgressbar.setVisibility(View.GONE);
     }
 
     //Validate Email
@@ -110,5 +109,12 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
             isValid = true;
         }
         return isValid;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mProgressbar.setVisibility(View.GONE);
+        mEditTextEmail.setText(null);
     }
 }

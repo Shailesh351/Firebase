@@ -2,14 +2,12 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Change Email"
-        android:id="@+id/menu_item_change_email" />
-    <item android:title="Change Password"
-        android:id="@+id/menu_item_change_password" />
     <item android:title="Reset Password"
         android:id="@+id/menu_item_reset_password" />
+    <item android:title="Link With Google"
+          android:id="@+id/menu_item_link_with_google"/>
     <item android:title="Delete Account"
-        android:id="@+id/menu_item_delete_account" />
+          android:id="@+id/menu_item_delete_account" />
     <item android:title="Sign Out"
         android:id="@+id/menu_item_sign_out" />
 </menu>

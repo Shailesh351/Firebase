@@ -89,8 +89,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         });
-
-        mProgressbar.setVisibility(View.GONE);
     }
 
     //Validate Email and Password Field

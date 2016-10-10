@@ -11,16 +11,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.ProviderQueryResult;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
+    private static final int RC_SIGN_IN = 9001;
     private TextView mTextViewEmail, mTextViewUId;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -48,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -62,6 +70,44 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         };
     }
 
+    //Link with Google
+    private void linkWithGoogle(){
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+            if (result.isSuccess()) {
+                final GoogleSignInAccount account = result.getSignInAccount();
+
+                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+
+                user.linkWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(MainActivity.this, "Linked with Google", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(MainActivity.this, "Unable to link with Google", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            } else {
+                // Google Sign In failed, update UI appropriately
+                Toast.makeText(this, "Unable to fetch providers", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    //Delete Account
     private void deleteAccount(){
         user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -120,12 +166,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
-            case R.id.menu_item_change_email:
-                return true;
-            case R.id.menu_item_change_password:
-                return true;
             case R.id.menu_item_reset_password:
                 startActivity(new Intent(MainActivity.this, ResetPasswordActivity.class));
+                linkWithGoogle();
+                return true;
+            case R.id.menu_item_link_with_google:
+                linkWithGoogle();
                 return true;
             case R.id.menu_item_delete_account:
                 deleteAccount();

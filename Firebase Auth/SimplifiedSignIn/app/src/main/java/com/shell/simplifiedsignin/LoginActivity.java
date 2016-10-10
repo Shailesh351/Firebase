@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.ProviderQueryResult;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,17 +127,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "Unable to login", Toast.LENGTH_SHORT).show();
+                    mProgressbar.setVisibility(View.GONE);
                 }
             }
         });
-
-        mProgressbar.setVisibility(View.GONE);
     }
 
     //Sign In with Google
     private void signInWithGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        mProgressbar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -148,11 +149,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = result.getSignInAccount();
+                final GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign In failed, update UI appropriately
                 Toast.makeText(this, "Google Sign In failed.", Toast.LENGTH_SHORT).show();
+                mProgressbar.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -169,6 +171,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            mProgressbar.setVisibility(View.INVISIBLE);
                         }else{
                             Toast.makeText(LoginActivity.this, "Signed In.",
                                     Toast.LENGTH_SHORT).show();
@@ -230,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        mProgressbar.setVisibility(View.GONE);
+        //mProgressbar.setVisibility(View.GONE);
     }
 
     @Override
